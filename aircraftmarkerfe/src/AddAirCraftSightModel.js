@@ -1,5 +1,7 @@
 import React, {Component} from 'react';
 import {Modal, Button, Row, Col, Form, Image} from 'react-bootstrap';
+import {dotenv} from 'dotenv';
+import {getCurrentDateAndTime} from './Utils';
 
 export class AddAirCraftSightModel extends Component {
     constructor(props) {
@@ -8,19 +10,18 @@ export class AddAirCraftSightModel extends Component {
         this.handleUploadedPhoto = this.handleUploadedPhoto.bind(this);
     }
 
-    photoFileName = "temp.png";
-    photoFileSource = process.env.APP_PHOTO_SRC_PATH + this.photoFileName;
+    photoFileName = "";
+    photoFileSource = process.env.REACT_APP_PHOTO_SRC + this.photoFileName;
 
     handleSubmit(event) {
         event.preventDefault();
-        fetch(process.env.APP_API + 'aircraftsights', {
+        fetch(process.env.REACT_APP_API + 'aircraftsights', {
             method : 'POST',
             headers: {
                 'accept' : 'application/json',
                 'Content-Type' : 'application/json'
             },
             body:JSON.stringify({
-                VisibleID : null,
                 Make : event.target.Make.value,
                 Model : event.target.Model.value,
                 Registration : event.target.Registration.value,
@@ -48,13 +49,14 @@ export class AddAirCraftSightModel extends Component {
             event.target.files[0].name
         );
 
-        fetch(process.env.APP_API + 'aircraftsights/savefile', {
+        fetch(process.env.REACT_APP_API + 'aircraftsights/saveimage', {
             method : 'POST',
             body : formData
         })
         .then(res => res.json())
         .then((result)=> {
-            this.photoFileSource = process.env.APP_PHOTO_SRC_PATH + result;
+            this.PhotoFileName = result;
+            this.photoFileSource = process.env.REACT_APP_PHOTO_SRC + result;
         },
         (error) => {
             alert('Upload Failed');
@@ -97,7 +99,7 @@ export class AddAirCraftSightModel extends Component {
                                    </Form.Group>
                                    <Form.Group controlId="DateAndTime">
                                        <Form.Label>DateAndTime</Form.Label>
-                                       <Form.Control type="date" name="DateAndTime" required placeholder="DateAndTime"/>
+                                       <Form.Control type="datetime-local" name="DateAndTime" required placeholder="DateAndTime" max={getCurrentDateAndTime()} />
                                    </Form.Group>
                                    <Form.Group>
                                        <Button variant="primary" type="submit">
@@ -113,7 +115,7 @@ export class AddAirCraftSightModel extends Component {
                        </Row>
                    </Modal.Body>
                    <Modal.Footer>
-                       <Button variant="danger" onclick={this.props.onHide}>
+                       <Button variant="danger" onClick={this.props.onHide}>
                            Close
                        </Button>
                    </Modal.Footer>

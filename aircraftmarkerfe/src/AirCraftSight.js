@@ -12,7 +12,7 @@ export class AirCraftSight extends Component {
     }
 
     refreshList() {
-        fetch(process.env.APP_API + 'aircraftsight')
+        fetch(process.env.REACT_APP_API + 'aircraftsights')
         .then(response=> response.json())
         .then(data=>{
             this.setState({sights:data});
@@ -24,12 +24,12 @@ export class AirCraftSight extends Component {
     }
 
     componentDidUpdate () {
-        this.refreshList();
+         this.refreshList();
     }
 
     deleteSight (visibleID) {
         if (window.confirm('Are you sure want to delete?')) {
-            fetch(process.env.APP_API + 'aircraftsights/' + visibleID,{
+            fetch(process.env.REACT_APP_API + 'aircraftsights/' + visibleID,{
                 method:'DELETE',
                 header:{'ACCEPT' : 'application/json', 'content-type' : 'application/json'}
             })
@@ -37,13 +37,13 @@ export class AirCraftSight extends Component {
     }
 
     render() {
-        const {sights, sightVisibleID, sightMake, sightModel, sightRegistration, sightLocation, sightDateAndTime, sightPhotoPath} = this.state;
+        const {sights, visibleid, make, model, registration, location, dateandtime, photofilename} = this.state;
         let addModelHide= ()=> this.setState({addModelShow:false});
         let editModelHide= ()=> this.setState({editModelShow:false});
         return (
             <div>
                 <Table className="mt-4" striped bordered hover size="sm">
-                    <thread>
+                    <thead>
                         <tr>
                             <th>VisibleID</th>
                             <th>Make</th>
@@ -54,7 +54,7 @@ export class AirCraftSight extends Component {
                             <th>PhotoFileName</th>
                             <th>Options</th>
                         </tr>
-                    </thread>
+                    </thead>
                     <tbody>
                         {sights.map(sight => 
                         <tr key={sight.VisibleID}>
@@ -64,29 +64,29 @@ export class AirCraftSight extends Component {
                             <td>{sight.Registration}</td>
                             <td>{sight.Location}</td>
                             <td>{sight.DateAndTime}</td>
-                            <td>{sight.PhotoFilePath} </td>
+                            <td>{sight.PhotoFileName} </td>
                             <td>
                             <ButtonToolbar>
                                 <Button className="mr-2" variant="info"
                                     onClick = {()=>this.setState({editModelShow:true,
-                                        sightVisibleID:sight.VisibleID,
-                                        sightMake:sight.Make,
-                                        sightModel:sight.Model,
-                                        sightRegistration:sight.Registration,
-                                        sightLocation:sight.Location,
-                                        sightDateAndTime:sight.DateAndTime,
-                                        sightPhotoPath:sight.PhotoFilePath
+                                        visibleid:sight.VisibleID,
+                                        make:sight.Make,
+                                        model:sight.Model,
+                                        registration:sight.Registration,
+                                        location:sight.Location,
+                                        dateandtime:sight.DateAndTime,
+                                        photofilename:sight.PhotoFileName
                                     })}>
                                     Edit
                                 </Button>
                                 <EditAirCraftSightModel show={this.state.editModelShow} onHide={editModelHide}
-                                    VisibleID = {sightVisibleID}
-                                    Make = {sightMake}
-                                    Model = {sightModel}
-                                    Registration = {sightRegistration}
-                                    Location = {sightLocation}
-                                    DateAndTime = {sightDateAndTime}
-                                    PhotoFilePath = {sightPhotoPath}
+                                    visibleid = {visibleid}
+                                    photofilename = {photofilename}
+                                    make = {make}
+                                    model = {model}
+                                    registration = {registration}
+                                    location = {location}
+                                    dateandtime = {dateandtime}
                                 />
                                 <Button className="mr-2" variant="danger"
                                     onClick = {()=>this.deleteSight(sight.VisibleID)}>
