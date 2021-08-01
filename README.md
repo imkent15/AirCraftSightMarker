@@ -18,14 +18,14 @@ dotnet ef database update
 The above is not handled via code as this is a one time deployment procedure in the real world scenario.
 
 
-Possible Enhancements
+# Possible Enhancements
 Authentication Module
 Logging Framework
 unit testing
 e2e testing
 API Documentation
 
-Basic Perf Enhancements
+# Basic Perf Enhancements
 Async Tasks 
 Handle large amount of data
 Push down filters to backend
