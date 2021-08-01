@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import {Modal, Button, Row, Col, Form, Image} from 'react-bootstrap';
-import {dotenv} from 'dotenv';
 import {getCurrentDateAndTime} from './Utils';
 
 export class AddAirCraftSightModel extends Component {
@@ -10,8 +9,15 @@ export class AddAirCraftSightModel extends Component {
         this.handleUploadedPhoto = this.handleUploadedPhoto.bind(this);
     }
 
-    photoFileName = "";
-    photoFileSource = process.env.REACT_APP_PHOTO_SRC + this.photoFileName;
+    photoFileName = "default.jpg";
+
+    refreshList() {
+        fetch(process.env.REACT_APP_API + 'aircraftsights')
+        .then(response=> response.json())
+        .then(data=>{
+            this.setState({sights:data});
+        });
+    }
 
     handleSubmit(event) {
         event.preventDefault();
@@ -33,6 +39,8 @@ export class AddAirCraftSightModel extends Component {
         .then(res => res.json())
         .then((result)=> {
             alert(result);
+            this.photoFileName = "default.jpg";
+            this.props.onHide();
         },
         (error) => {
             alert('Failed');
@@ -56,7 +64,8 @@ export class AddAirCraftSightModel extends Component {
         .then(res => res.json())
         .then((result)=> {
             this.PhotoFileName = result;
-            this.photoFileSource = process.env.REACT_APP_PHOTO_SRC + result;
+            this.refreshList();
+            this.render();
         },
         (error) => {
             alert('Upload Failed');
@@ -109,7 +118,7 @@ export class AddAirCraftSightModel extends Component {
                                </Form>
                            </Col>
                            <Col sm={6}>
-                               <Image width="200px" height="200px" src ={this.photoFileSource} />
+                               <Image width="200px" height="200px" src ={process.env.REACT_APP_PHOTO_SRC + this.photoFileName} />
                                <input onChange={this.handleUploadedPhoto} type="File" />
                            </Col>
                        </Row>

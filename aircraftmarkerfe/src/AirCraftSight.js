@@ -1,6 +1,4 @@
 import React, {Component} from 'react';
-import {Table} from 'react-bootstrap';
-import {Button, ButtonToolbar} from 'react-bootstrap';
 import {AddAirCraftSightModel} from './AddAirCraftSightModel'
 import {EditAirCraftSightModel} from './EditAirCraftSightModel'
 
@@ -26,7 +24,7 @@ export class AirCraftSight extends Component {
     }
 
     componentDidUpdate () {
-         this.refreshList();
+       // this.refreshList();
     }
 
     deleteSight (visibleID) {
@@ -36,13 +34,12 @@ export class AirCraftSight extends Component {
                 header:{'ACCEPT' : 'application/json', 'content-type' : 'application/json'}
             })
         }
-    }
 
+        this.refreshList();
+    }
+    
     render() {
         const {sights, visibleid, make, model, registration, location, dateandtime, photofilename} = this.state;
-        const sightsDateTemp = [
-            {VisibleID:'453fgh', Make:'Auro', Model:'AuroFF', Registration:'Au-FGTY', Location:'London', DateAndTime:'2021-07-31T12:34:00',PhotoFileName:'sight.jpg'}
-        ]
         const columns = [
             {title:"Visible ID", field:"VisibleID"},
             {title:"Make", field:"Make"},
@@ -52,15 +49,19 @@ export class AirCraftSight extends Component {
             {title:"Date And Time", field:"DateAndTime"},
             {title:"Photo File Name", field:"PhotoFileName"}
         ]
-        let addModelHide= ()=> this.setState({addModelShow:false});
-        let editModelHide= ()=> this.setState({editModelShow:false});
+        
+        
+        let addModelHide= ()=> this.setState({addModelShow:false}, this.refreshList());
+        let editModelHide= ()=> this.setState({editModelShow:false}, this.refreshList());
         return (
             <div>
-                <MaterialTable title="AirCraft Sights" data={sights} columns={columns} search
+                <MaterialTable title="AirCraft Sights" data={sights} columns={columns} 
                 options={
                     {
                         search:false,
-                        filtering:true
+                        filtering:true,
+                        paging: false,
+                        refreshList:false
                     } 
                 }
 
@@ -102,10 +103,9 @@ export class AirCraftSight extends Component {
 
                 ]}
                 />
-                <AddAirCraftSightModel show={this.state.addModelShow} onHide={addModelHide}/>
+                <AddAirCraftSightModel show={this.state.addModelShow} onHide={addModelHide} />
                 <EditAirCraftSightModel show={this.state.editModelShow} onHide={editModelHide}
                                     visibleid = {visibleid}
-                                    photofilename = {photofilename}
                                     make = {make}
                                     model = {model}
                                     registration = {registration}

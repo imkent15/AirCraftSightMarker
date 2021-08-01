@@ -1,17 +1,23 @@
 import React, {Component} from 'react';
 import {Modal, Button, Row, Col, Form, Image} from 'react-bootstrap';
-import {dotenv} from 'dotenv';
 import {getCurrentDateAndTime} from './Utils';
 
 export class EditAirCraftSightModel extends Component {
 
-    photoFileName = this.props.photofilename;
-    photoFileSource = process.env.REACT_APP_PHOTO_SRC + this.photoFileName;
+    photoFileName = "default.jpg";
 
     constructor(props) {
         super(props);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleUploadedPhoto = this.handleUploadedPhoto.bind(this);
+    }
+
+    refreshList() {
+        fetch(process.env.REACT_APP_API + 'aircraftsights')
+        .then(response=> response.json())
+        .then(data=>{
+            this.setState({sights:data});
+        });
     }
 
     handleSubmit(event) {
@@ -36,6 +42,8 @@ export class EditAirCraftSightModel extends Component {
         .then(res => res.json())
         .then((result)=> {
             alert(result);
+            this.photoFileName = "default.jpg";
+            this.props.onHide();
         },
         (error) => {
             alert('Failed');
@@ -59,7 +67,7 @@ export class EditAirCraftSightModel extends Component {
         .then(res => res.json())
         .then((result)=> {
             this.photoFileName = result;
-            this.photoFileSource = process.env.REACT_APP_PHOTO_SRC + result;
+            this.refreshList();
         },
         (error) => {
             alert('Upload Failed');
@@ -115,7 +123,7 @@ export class EditAirCraftSightModel extends Component {
                                </Form>
                            </Col>
                            <Col sm={6}>
-                               <Image width="200px" height="200px" src ={(this.photoFileName === "") ? (process.env.REACT_APP_PHOTO_SRC + this.props.photofilename) : (process.env.REACT_APP_PHOTO_SRC + this.photoFileName) } />
+                               <Image width="200px" height="200px" src ={(this.photoFileName === 'default.jpg') ? (process.env.REACT_APP_PHOTO_SRC + this.props.photofilename) : (process.env.REACT_APP_PHOTO_SRC + this.photoFileName) } />
                                <input onChange={this.handleUploadedPhoto} type="File" />
                            </Col>
                        </Row>
