@@ -5,7 +5,7 @@ import {getCurrentDateAndTime} from './Utils';
 
 export class EditAirCraftSightModel extends Component {
 
-    photoFileName = "";
+    photoFileName = this.props.photofilename;
     photoFileSource = process.env.REACT_APP_PHOTO_SRC + this.photoFileName;
 
     constructor(props) {
@@ -16,11 +16,6 @@ export class EditAirCraftSightModel extends Component {
 
     handleSubmit(event) {
         event.preventDefault();
-
-        if (this.photoFileName === "")
-        {
-            this.photoFileName = this.props.photofilename;
-        }
 
         fetch(process.env.REACT_APP_API + 'aircraftsights/' + this.props.visibleid, {
             method : 'PUT',

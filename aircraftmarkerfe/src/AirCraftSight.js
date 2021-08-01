@@ -4,6 +4,8 @@ import {Button, ButtonToolbar} from 'react-bootstrap';
 import {AddAirCraftSightModel} from './AddAirCraftSightModel'
 import {EditAirCraftSightModel} from './EditAirCraftSightModel'
 
+import MaterialTable from 'material-table'
+
 export class AirCraftSight extends Component {
 
     constructor(props) {
@@ -38,48 +40,70 @@ export class AirCraftSight extends Component {
 
     render() {
         const {sights, visibleid, make, model, registration, location, dateandtime, photofilename} = this.state;
+        const sightsDateTemp = [
+            {VisibleID:'453fgh', Make:'Auro', Model:'AuroFF', Registration:'Au-FGTY', Location:'London', DateAndTime:'2021-07-31T12:34:00',PhotoFileName:'sight.jpg'}
+        ]
+        const columns = [
+            {title:"Visible ID", field:"VisibleID"},
+            {title:"Make", field:"Make"},
+            {title:"Model", field:"Model"},
+            {title:"Registration", field:"Registration"},
+            {title:"Location", field:"Location"},
+            {title:"Date And Time", field:"DateAndTime"},
+            {title:"Photo File Name", field:"PhotoFileName"}
+        ]
         let addModelHide= ()=> this.setState({addModelShow:false});
         let editModelHide= ()=> this.setState({editModelShow:false});
         return (
             <div>
-                <Table className="mt-4" striped bordered hover size="sm">
-                    <thead>
-                        <tr>
-                            <th>VisibleID</th>
-                            <th>Make</th>
-                            <th>Model</th>
-                            <th>Registration</th>
-                            <th>Location</th>
-                            <th>DateAndTime</th>
-                            <th>PhotoFileName</th>
-                            <th>Options</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {sights.map(sight => 
-                        <tr key={sight.VisibleID}>
-                            <td>{sight.VisibleID}</td>
-                            <td>{sight.Make}</td>
-                            <td>{sight.Model}</td>
-                            <td>{sight.Registration}</td>
-                            <td>{sight.Location}</td>
-                            <td>{sight.DateAndTime}</td>
-                            <td>{sight.PhotoFileName} </td>
-                            <td>
-                            <ButtonToolbar>
-                                <Button className="mr-2" variant="info"
-                                    onClick = {()=>this.setState({editModelShow:true,
-                                        visibleid:sight.VisibleID,
-                                        make:sight.Make,
-                                        model:sight.Model,
-                                        registration:sight.Registration,
-                                        location:sight.Location,
-                                        dateandtime:sight.DateAndTime,
-                                        photofilename:sight.PhotoFileName
-                                    })}>
-                                    Edit
-                                </Button>
-                                <EditAirCraftSightModel show={this.state.editModelShow} onHide={editModelHide}
+                <MaterialTable title="AirCraft Sights" data={sights} columns={columns} search
+                options={
+                    {
+                        search:false,
+                        filtering:true
+                    } 
+                }
+
+                actions={[
+                    rowData => ({
+                        icon: 'edit',
+                        tooltip: 'Edit Air Craft Sight',
+                        onClick: (event, rowData) => {
+                            this.setState({
+                                visibleid:rowData.VisibleID,
+                                make:rowData.Make,
+                                model:rowData.Model,
+                                registration:rowData.Registration,
+                                location:rowData.Location,
+                                dateandtime:rowData.DateAndTime,
+                                photofilename:rowData.PhotoFileName
+                                })
+                            this.setState({editModelShow:true}) 
+                        }
+                    }), 
+
+                    rowData => ({
+                        icon: 'delete',
+                        tooltip: 'Delete Air Craft Sight',
+                        onClick: (event, rowData) => {
+                            this.deleteSight(rowData.VisibleID);
+                        }
+                    }),
+
+                    {
+                        icon: 'add',
+                        tooltip: 'Add Air Craft Sight',
+                        isFreeAction : true,
+                        onClick: () => {
+                            this.setState({addModelShow:true}) 
+                        }
+                    }
+
+
+                ]}
+                />
+                <AddAirCraftSightModel show={this.state.addModelShow} onHide={addModelHide}/>
+                <EditAirCraftSightModel show={this.state.editModelShow} onHide={editModelHide}
                                     visibleid = {visibleid}
                                     photofilename = {photofilename}
                                     make = {make}
@@ -87,23 +111,8 @@ export class AirCraftSight extends Component {
                                     registration = {registration}
                                     location = {location}
                                     dateandtime = {dateandtime}
-                                />
-                                <Button className="mr-2" variant="danger"
-                                    onClick = {()=>this.deleteSight(sight.VisibleID)}>
-                                    Delete
-                                </Button>
-                            </ButtonToolbar>
-                            </td>
-                        </tr>)}
-                    </tbody>
-                </Table>
-                <ButtonToolbar>
-                    <Button variant="primary"
-                    onClick = {()=>this.setState({addModelShow:true})}>
-                        AddAirCraftSight
-                    </Button>
-                    <AddAirCraftSightModel show={this.state.addModelShow} onHide={addModelHide}/>
-                </ButtonToolbar> 
+                                    photofilename = {photofilename}
+                />
             </div>
         )
     }
